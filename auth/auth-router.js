@@ -4,7 +4,7 @@ const router = require("express").Router();
 
 const Users = require("../users/users-model");
 
-router.post("/register", (req, res) => {
+router.post("/register", validateUser, (req, res) => {
   let user = req.body;
 
   const hash = bcrypt.hashSync(user.password, 8);
@@ -20,7 +20,7 @@ router.post("/register", (req, res) => {
     });
 });
 
-router.post("/login", (req, res) => {
+router.post("/login", validateUser, (req, res) => {
   let { username, password } = req.body;
 
   Users.findBy({ username })
@@ -45,5 +45,15 @@ router.get("/logout", (req, res) => {
     res.status(200).json({ message: "logged out" });
   }
 });
+
+// Middleware for validating user
+function validateUser(req, res, next) {
+  const { username, password } = req.body;
+  if (username && password) {
+    next();
+  } else {
+    res.status(400).json({ message: "Provide username and password" });
+  }
+}
 
 module.exports = router;
