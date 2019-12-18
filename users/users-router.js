@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const protected = require("../api/middleware");
 
 const Users = require("./users-model.js");
 
@@ -9,14 +10,5 @@ router.get("/", protected, (req, res) => {
     })
     .catch(err => res.send(err));
 });
-
-// Router Middleware
-function protected(req, res, next) {
-  if (req.session && req.session.user) {
-    next();
-  } else {
-    res.status(401).json({ message: "You shall not pass" });
-  }
-}
 
 module.exports = router;
